@@ -125,6 +125,36 @@ app.post('/add-property', async (req, res) => {
   }
 });
 
+app.put('/update-property/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateData = req.body;
+
+    if (!id) {
+      return res.status(400).send({ error: "ID is required" });
+    }
+
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).send({ error: "Update data is required" });
+    }
+
+    const query = { _id: new ObjectId(id) };
+    const update = { $set: updateData };
+
+    const result = await PropertyCollection.updateOne(query, update);
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send({ error: "Property not found" });
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error updating property:", error);
+    res.status(500).send({ error: "Failed to update property" });
+  }
+});
+
+
 app.get('/my-properties',async(req,res)=>{
       const gmail = req.body.gmail
         if(!gmail){
