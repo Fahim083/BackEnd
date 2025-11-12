@@ -154,6 +154,28 @@ app.put('/update-property/:id', async (req, res) => {
   }
 });
 
+app.delete('/delete-property/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(400).send({ error: "ID is required" });
+    }
+
+    const query = { _id: new ObjectId(id) };
+    const result = await PropertyCollection.deleteOne(query);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send({ error: "Property not found" });
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error deleting property:", error);
+    res.status(500).send({ error: "Failed to delete property" });
+  }
+});
+
 
 app.get('/my-properties',async(req,res)=>{
       const gmail = req.body.gmail
