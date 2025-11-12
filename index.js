@@ -87,19 +87,28 @@ async function run() {
   }
 });
 
+app.get('/property-details/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
 
-    app.get('/properties/:id',async(req,res)=>{
-      const id = req.params.id
-      if(!id){
-        return res.status(400).send({error: "ID is required"})
-        }
-      const query = {_id: new ObjectId(id)}
-      const result = await PropertyCollection.findOne(query)
-      if(!Array(result) || result.length === 0){
-        return  res.status(404).send({error: "Property not found"})
-      } 
-      res.send(result)
-    })
+    if (!id) {
+      return res.status(400).send({ error: "ID is required" });
+    }
+
+    const query = { _id: new ObjectId(id) };
+    const result = await PropertyCollection.findOne(query);
+
+    if (!result) {
+      return res.status(404).send({ error: "Property not found" });
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error fetching property:", error);
+    res.status(500).send({ error: "Failed to fetch property" });
+  }
+});
+
 
     app.get('/my-properties',async(req,res)=>{
       const gmail = req.body.gmail
