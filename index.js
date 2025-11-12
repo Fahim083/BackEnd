@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import { MongoClient, ServerApiVersion,ObjectId } from 'mongodb';
 const port = process.env.PORT || 3000
 dotenv.config()
-
+// console.log(process.env.DB_USER);
 app.use(cors({
   origin: ['http://localhost:3000',
    'http://localhost:5173',
@@ -23,7 +23,7 @@ app.get("/",async(req,res)=>{
 })
 
 
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.2n5zm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2n5zm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -43,7 +43,20 @@ async function run() {
 
     const PropertyCollection = client.db('Homenest').collection('Properties');
     const ReviewCollection = client.db('Homenest').collection('Reviews');
+    app.get('/properties',async(req,res)=>{
+      const result = await PropertyCollection.find().toArray()
+      res.send(result)
+    })
 
+    app.get('/reviews',async(req,res)=>{
+        const {gmail} = req.query
+        if(!gmail){
+          return res.status(400).send({error: "Gmail is required"})
+        }
+        const query = {gmail:gmail}
+      const result = await ReviewCollection.find(query).toArray()
+      res.send(result)
+    })
 
   }  finally {
     // Ensures that the client will close when you finish/error
