@@ -43,18 +43,87 @@ async function run() {
 
     const PropertyCollection = client.db('Homenest').collection('Properties');
     const ReviewCollection = client.db('Homenest').collection('Reviews');
+
+
     app.get('/properties',async(req,res)=>{
       const result = await PropertyCollection.find().toArray()
       res.send(result)
     })
 
+    app.get('/home-properties',async(req,res)=>{
+      const result = await PropertyCollection.find().sort({date:-1}).limit(6).toArray()
+      res.send(result)
+    })
+
+   app.get('/properties/:sort', async (req, res) => {
+  try {
+    const sort = req.params.sort;
+
+    if (!sort) {
+      return res.status(400).send({ error: "Sort parameter is required" });
+    }
+
+    // Determine sort option
+    let sortOption = {};
+    if (sort === 'asc') {
+      sortOption = { Date: 1 }; // oldest first
+    } else if (sort === 'desc') {
+      sortOption = { Date: -1 }; // newest first
+    } else {
+      return res.status(400).send({ error: "Sort must be 'asc' or 'desc'" });
+    }
+
+    const result = await PropertyCollection.find().sort(sortOption).toArray();
+
+    // Check if result is empty
+    if (!result || result.length === 0) {
+      return res.status(404).send({ error: "No properties found" });
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    res.status(500).send({ error: "Failed to fetch properties" });
+  }
+});
+
+
+    app.get('/properties/:id',async(req,res)=>{
+      const id = req.params.id
+      if(!id){
+        return res.status(400).send({error: "ID is required"})
+        }
+      const query = {_id: new ObjectId(id)}
+      const result = await PropertyCollection.findOne(query)
+      if(!Array(result) || result.length === 0){
+        return  res.status(404).send({error: "Property not found"})
+      } 
+      res.send(result)
+    })
+
+    app.get('/my-properties',async(req,res)=>{
+      const gmail = req.body.gmail
+        if(!gmail){
+            return res.status(400).send({error: "Gmail is required"})
+        }
+      const query = {gmail:gmail}
+      const result = await PropertyCollection.find(query).toArray()
+      if(!result){
+        return  res.status(404).send({error: "No properties found"})
+      }
+      res.send(result)
+    })
+
     app.get('/reviews',async(req,res)=>{
-        const {gmail} = req.query
+        const {gmail} = req.body
         if(!gmail){
           return res.status(400).send({error: "Gmail is required"})
         }
         const query = {gmail:gmail}
       const result = await ReviewCollection.find(query).toArray()
+      if(!Array(result) || result.length === 0){
+        return  res.status(404).send({error: "No reviews found"})
+      }
       res.send(result)
     })
 
