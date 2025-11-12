@@ -203,6 +203,15 @@ app.get('/my-properties',async(req,res)=>{
       res.send(result)
     })
 
+    app.post('/create-review',async(req,res)=>{
+      const review = req.body
+      if(!review || Object.keys(review).length === 0){
+        return res.status(400).send({error: "Review data is required"})
+      }
+      const result = await ReviewCollection.insertOne(review)
+      res.send(result)
+    })
+
   }  finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
