@@ -109,8 +109,23 @@ app.get('/property-details/:id', async (req, res) => {
   }
 });
 
+app.post('/add-property', async (req, res) => {
+  try {
+    const property = req.body;
 
-    app.get('/my-properties',async(req,res)=>{
+    if (!property || property.length === 0) {
+      return res.status(400).send({ error: "Property data is required" });
+    }
+
+    const result = await PropertyCollection.insertOne(property);
+    res.status(201).send(result);
+  } catch (error) {
+    console.error("Error adding property:", error);
+    res.status(500).send({ error: "Failed to add property" });
+  }
+});
+
+app.get('/my-properties',async(req,res)=>{
       const gmail = req.body.gmail
         if(!gmail){
             return res.status(400).send({error: "Gmail is required"})
