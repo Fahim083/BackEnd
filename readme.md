@@ -12,7 +12,7 @@ It handles data storage, CRUD operations, and user-related functionalities via a
 ---
 
 ## 🌐 Live Server URL
-[👉 Hosted on Vercel](https://homenest-server.vercel.app)
+[👉 Hosted on Vercel](https://back-end-henna-six.vercel.app/)
 
 ---
 
@@ -27,5 +27,4 @@ It handles data storage, CRUD operations, and user-related functionalities via a
 
 ---
 
-## 📁 Folder Structure
 
