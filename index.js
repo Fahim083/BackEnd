@@ -10,7 +10,7 @@ app.use(cors({
   origin: ['http://localhost:3000',
    'http://localhost:5173',
   'http://localhost:5173',
-  'homenests.netlify.app',
+  'https://homenests.netlify.app/home',
   'https://velvety-moxie-01f024.netlify.app'
   ],
   credentials: true
