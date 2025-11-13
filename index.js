@@ -178,11 +178,11 @@ app.delete('/delete-property/:id', async (req, res) => {
 
 
 app.get('/my-properties',async(req,res)=>{
-      const gmail = req.body.gmail
+      const gmail = req.query.gmail
         if(!gmail){
             return res.status(400).send({error: "Gmail is required"})
         }
-      const query = {gmail:gmail}
+      const query = {UserEmail:gmail}
       const result = await PropertyCollection.find(query).toArray()
       if(!result){
         return  res.status(404).send({error: "No properties found"})
@@ -190,12 +190,12 @@ app.get('/my-properties',async(req,res)=>{
       res.send(result)
     })
 
-    app.get('/reviews',async(req,res)=>{
-        const {gmail} = req.body
+    app.get('/my-reviews',async(req,res)=>{
+        const {gmail} = req.query
         if(!gmail){
           return res.status(400).send({error: "Gmail is required"})
         }
-        const query = {gmail:gmail}
+        const query = {reviewerEmail:gmail}
       const result = await ReviewCollection.find(query).toArray()
       if(!Array(result) || result.length === 0){
         return  res.status(404).send({error: "No reviews found"})
@@ -222,4 +222,5 @@ run().catch(console.dir);
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
 })
+
 
